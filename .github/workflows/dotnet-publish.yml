@@ -33,10 +33,10 @@ jobs:
       - name: Build
         run: dotnet build ${{ format('{0}', env.SOLUTION_FILENAME) }} --no-restore --configuration Release  -p:ContinuousIntegrationBuild=true -p:GeneratePackageOnBuild=false
 
-        name: Pack
+      - name: Pack
         run: dotnet pack ${{ format('{0}', env.SOLUTION_FILENAME) }} --no-build --configuration Release --output ${env:ARTIFACTS_DIRECTORY}
 
-        name: Add nugets to release assets
+      - name: Add nugets to release assets
         run: |
           $assets = @( Get-ChildItem -File "${env:ARTIFACTS_DIRECTORY}\*.nupkg" | ForEach-Object { ' -a ' + $_.FullName } ) -join " "
           $assets = $assets.Trim()

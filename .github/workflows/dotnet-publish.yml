@@ -1,0 +1,48 @@
+name: .NET Publish
+
+env:
+  SOLUTION_FILENAME: 'sdkgithubactions.sln'
+  ARTIFACTS_DIRECTORY: 'output'
+
+on: [published]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0.x
+
+      - name: Restore tools
+        run: dotnet tool restore
+
+      - name: Restore dependencies
+        run: dotnet paket restore
+
+      - name: Restore project files
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build ${{ format('{0}', env.SOLUTION_FILENAME) }} --no-restore --configuration Release  -p:ContinuousIntegrationBuild=true -p:GeneratePackageOnBuild=false
+
+        name: Pack
+        run: dotnet pack ${{ format('{0}', env.SOLUTION_FILENAME) }} --no-build --configuration Release --output ${env:ARTIFACTS_DIRECTORY}
+
+        name: Add nugets to release assets
+        run: |
+          $assets = @( Get-ChildItem -File "${env:ARTIFACTS_DIRECTORY}\*.nupkg" | ForEach-Object { ' -a ' + $_.FullName } ) -join " "
+          $assets = $assets.Trim()
+          cmd /C "hub release edit $assets -m `"`" `"${{ github.event.release.tag_name }}`""
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish nugets on github
+        run: |
+          # Do not remove /** in path, this is workaround for known bug in .NET Core 2.1 SDK and earlier. See notes in (https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-nuget-push)
+          dotnet nuget push "${env:ARTIFACTS_DIRECTORY}/**/*.nupkg" -k ${{ secrets.GITHUB_TOKEN }} -s "https://nuget.pkg.github.com/bjliutyi/index.json" --skip-duplicate --no-symbols true

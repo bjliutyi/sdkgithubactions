@@ -28,4 +28,4 @@ jobs:
         run: dotnet restore
 
       - name: Build
-        run: dotnet build ${{ format('{0}', env.SOLUTION_FILENAME) }} --no-restore --configuration Release
+        run: dotnet build ${{ format('{0}', env.SOLUTION_FILENAME) }} --no-restore --configuration Release  -p:ContinuousIntegrationBuild=true -p:GeneratePackageOnBuild=false

@@ -4,10 +4,12 @@ env:
   SOLUTION_FILENAME: 'sdkgithubactions.sln'
   ARTIFACTS_DIRECTORY: 'output'
 
-on: [published]
+on: 
+  release:
+    types: [published]
 
 jobs:
-  build:
+  publish:
     runs-on: windows-latest
 
     steps:

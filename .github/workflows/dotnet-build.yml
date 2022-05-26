@@ -18,14 +18,14 @@ jobs:
         with:
           dotnet-version: 5.0.x
 
-      - name: Restore
-        run: dotnet restore
-
       - name: Restore tools
         run: dotnet tool restore
 
       - name: Restore dependencies
         run: dotnet paket restore
+
+      - name: Restore project files
+        run: dotnet restore
 
       - name: Build
         run: dotnet build ${{ format('{0}', env.SOLUTION_FILENAME) }} --no-restore --configuration Release

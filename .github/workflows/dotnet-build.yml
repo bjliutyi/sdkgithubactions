@@ -1,7 +1,7 @@
 name: .NET CI
 
 env:
-  SOLUTION_FILENAME: 'GitHubActions.sln'
+  SOLUTION_FILENAME: 'sdkgithubactions.sln'
 
 on: [push, pull_request]
 

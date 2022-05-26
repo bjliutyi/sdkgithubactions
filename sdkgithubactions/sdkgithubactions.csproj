@@ -3,6 +3,8 @@
   <PropertyGroup>
     <!-- <TargetFramework>net5.0</TargetFramework> -->
     <TargetFramework>net47</TargetFramework>
+    <RepositoryUrl>https://github.com/bjliutyi/sdkgithubactions.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />
 </Project>
